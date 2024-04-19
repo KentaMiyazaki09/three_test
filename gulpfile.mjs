@@ -125,13 +125,17 @@ const watchFiles = (done) => {
   done()
 }
 
+const deleteFiles = async() => {
+  await fs.promises.rm('./dist', { recursive: true, force: true })
+}
+
 /** ファイル削除とbuild */
 const buildFiles = async(done) => {
-  await fs.rm('./dist', { recursive: true }, () => console.log('distを削除しました'))
+  await deleteFiles()
+  minifyImages()
   buildSass()
   compileEjs()
   compireJS()
-  minifyImages()
   done()
 }
 
