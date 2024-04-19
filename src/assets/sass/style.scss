@@ -1,0 +1,10 @@
+@use './_reset';
+@use './_mixin' as m;
+
+// modeuls
+@use './_modules/_test';
+
+.stage {
+  width: 100%;
+  height: 100vh;
+}
