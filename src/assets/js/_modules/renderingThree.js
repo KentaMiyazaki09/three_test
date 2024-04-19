@@ -5,6 +5,8 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 // Scene
 const Scene = new THREE.Scene()
+// 背景色
+Scene.background = new THREE.Color(0xffffff)
 
 // Renderer
 const Renderer = new THREE.WebGLRenderer()
@@ -39,9 +41,10 @@ Loader.load(
   }
 )
 
-const light = new THREE.DirectionalLight(0xefefef, 10)
-light.position.set(150, 0, 0).normalize()
-Scene.add(light)
+const Light = new THREE.AmbientLight(0xefefef, 7)
+Scene.add(Light)
+// const Light02 = new THREE.DirectionalLight(0xefefef, 5)
+// Light.position.set(0, 1, 0).normalize()
 
 // Renderer set
 Renderer.setSize(window.innerWidth, window.innerHeight)
@@ -63,7 +66,7 @@ export default () => {
 
   document.querySelector('.button-get-fov').addEventListener('click', e => {
     e.preventDefault()
-    const { position } = Controls.object
-    console.log(position)
+    // const { position } = Controls.object
+    console.log(Light)
   })
 }
