@@ -17,10 +17,12 @@ const Renderer = new THREE.WebGLRenderer()
 // Scene.add(Cube)
 
 // Camera
-const Camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000)
-Camera.position.set(3, 1, 1)
+const Camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
+Camera.position.set(198, 9, -150)
 
 const Controls = new OrbitControls(Camera, Renderer.domElement)
+Controls.enableDamping = true
+Controls.dampingFactor = 0.2
 
 // scene loaded
 const Loader = new GLTFLoader()
@@ -37,8 +39,8 @@ Loader.load(
   }
 )
 
-const light = new THREE.DirectionalLight(0xefefef, 2)
-light.position.set(1, 5, 5).normalize()
+const light = new THREE.DirectionalLight(0xefefef, 10)
+light.position.set(150, 0, 0).normalize()
 Scene.add(light)
 
 // Renderer set
@@ -58,4 +60,10 @@ function animate() {
 
 export default () => {
   animate()
+
+  document.querySelector('.button-get-fov').addEventListener('click', e => {
+    e.preventDefault()
+    const { position } = Controls.object
+    console.log(position)
+  })
 }
