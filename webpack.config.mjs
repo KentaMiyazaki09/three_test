@@ -5,7 +5,7 @@ const ENV = process.env.NODE_ENV
 
 export default {
   mode: ENV,
-  devtool: ENV === 'production' ? 'source-map' : undefined,
+  devtool: ENV === 'development' ? 'source-map' : undefined,
   output: {
     filename: '[name].js', // [name] gulpで設定
   },

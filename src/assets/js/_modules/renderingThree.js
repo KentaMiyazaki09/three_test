@@ -28,19 +28,30 @@ Controls.dampingFactor = 0.2
 
 // scene loaded
 const Loader = new GLTFLoader()
-Loader.load(
-  '/assets/images/giant_isopod/scene.gltf',
-  (gltf) => {
-    Scene.add(gltf.scene)
-  },
-  (xhr) => {
-    console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`)
-  },
-  (error) => {
-    console.log(error)
-  }
-)
+Loader.load('./assets/images/giant_isopod/scene.gltf', (gltf) => Scene.add(gltf.scene))
 
+const loader = document.querySelector('.loading')
+THREE.DefaultLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
+  const ratio = itemsLoaded / itemsTotal * 100
+  const loadingText = `Loading ${ratio} %`
+  loader.textContent = loadingText
+
+  if (ratio === 100) {
+    setTimeout(() => {
+      document.querySelector('.loading').classList.add('is-hide')
+    }, 3000)
+  }
+}
+
+
+// loader
+const manager = new THREE.LoadingManager();
+manager.onProgress = function ( item, loaded, total ) {
+  console.log(loaded)
+  // progressBar.style.width = (loaded / total * 100) + '%'
+}
+
+// light
 const Light = new THREE.AmbientLight(0xefefef, 7)
 Scene.add(Light)
 // const Light02 = new THREE.DirectionalLight(0xefefef, 5)
@@ -64,9 +75,8 @@ function animate() {
 export default () => {
   animate()
 
-  document.querySelector('.button-get-fov').addEventListener('click', e => {
-    e.preventDefault()
-    // const { position } = Controls.object
-    console.log(Light)
-  })
+  // document.querySelector('.button-get-fov').addEventListener('click', e => {
+  //   e.preventDefault()
+  //   console.log(Light)
+  // })
 }
