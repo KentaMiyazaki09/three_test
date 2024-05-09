@@ -11,13 +11,6 @@ Scene.background = new THREE.Color(0xffffff)
 // Renderer
 const Renderer = new THREE.WebGLRenderer()
 
-// Mesh
-// const geometry = new THREE.BoxGeometry(1, 3, 2)
-// const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-// const Cube = new THREE.Mesh(geometry, material)
-// Cube.position.set(0, 0, 1)
-// Scene.add(Cube)
-
 // Camera
 const Camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
 Camera.position.set(198, 9, -150)
@@ -54,8 +47,6 @@ manager.onProgress = function ( item, loaded, total ) {
 // light
 const Light = new THREE.AmbientLight(0xefefef, 7)
 Scene.add(Light)
-// const Light02 = new THREE.DirectionalLight(0xefefef, 5)
-// Light.position.set(0, 1, 0).normalize()
 
 // Renderer set
 Renderer.setSize(window.innerWidth, window.innerHeight)
@@ -64,9 +55,6 @@ document.querySelector('.stage').appendChild(Renderer.domElement)
 //  シーンとカメラを描画
 function animate() {
   requestAnimationFrame(animate)
-
-  // Cube.rotation.x += 0.01
-  // Cube.rotation.y += 0.01
 
   Controls.update()
   Renderer.render( Scene, Camera)
