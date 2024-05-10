@@ -1,70 +1,164 @@
 import * as THREE from 'three';
+import { vShader, fShader } from '../_shader/_shader'
 
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
-import { OrbitControls } from 'three/examples/jsm/Addons.js';
+const canvasEl = document.getElementById('webgl-canvas');
+const canvasSize = {
+  w: window.innerWidth,
+  h: window.innerHeight,
+};
 
-// Scene
-const Scene = new THREE.Scene()
-// 背景色
-Scene.background = new THREE.Color(0xffffff)
+const renderer = new THREE.WebGLRenderer({ canvas: canvasEl });
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(canvasSize.w, canvasSize.h);
 
-// Renderer
-const Renderer = new THREE.WebGLRenderer()
+// ウィンドウとwebGLの座標を一致させるため、描画がウィンドウぴったりになるようカメラを調整
+const fov = 60; // 視野角
+const fovRad = (fov / 2) * (Math.PI / 180);
+const dist = canvasSize.h / 2 / Math.tan(fovRad);
+const camera = new THREE.PerspectiveCamera(
+  fov,
+  canvasSize.w / canvasSize.h,
+  0.1,
+  1000
+);
+camera.position.z = dist;
 
-// Camera
-const Camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 2000)
-Camera.position.set(198, 9, -150)
+const scene = new THREE.Scene();
 
-const Controls = new OrbitControls(Camera, Renderer.domElement)
-Controls.enableDamping = true
-Controls.dampingFactor = 0.2
+const loader = new THREE.TextureLoader();
 
-// scene loaded
-const Loader = new GLTFLoader()
-Loader.load('./assets/images/giant_isopod/scene.gltf', (gltf) => Scene.add(gltf.scene))
+// 画像をテクスチャにしたplaneを扱うクラス
+class ImagePlane {
+  constructor(mesh, img) {
+    this.refImage = img;
+    this.mesh = mesh;
+  }
 
-const loader = document.querySelector('.loading')
-THREE.DefaultLoadingManager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
-  const ratio = itemsLoaded / itemsTotal * 100
-  const loadingText = `Loading ${ratio} %`
-  loader.textContent = loadingText
+  setParams() {
+    // 参照するimg要素から大きさ、位置を取得してセット
+    const rect = this.refImage.getBoundingClientRect();
 
-  if (ratio === 100) {
-    setTimeout(() => {
-      document.querySelector('.loading').classList.add('is-hide')
-    }, 3000)
+    this.mesh.scale.x = rect.width;
+    this.mesh.scale.y = rect.height;
+
+    const x = rect.left - canvasSize.w / 2 + rect.width / 2;
+    const y = -rect.top + canvasSize.h / 2 - rect.height / 2;
+    this.mesh.position.set(x, y, this.mesh.position.z);
+  }
+
+  update(offset) {
+    this.setParams();
+
+    this.mesh.material.uniforms.uTime.value = offset;
   }
 }
 
+// Planeメッシュを作る関数
+const createMesh = (img) => {
+  const texture = loader.load(img.src);
 
-// loader
-const manager = new THREE.LoadingManager();
-manager.onProgress = function ( item, loaded, total ) {
-  console.log(loaded)
-  // progressBar.style.width = (loaded / total * 100) + '%'
-}
+  const uniforms = {
+    uTexture: { value: texture },
+    uImageAspect: { value: img.naturalWidth / img.naturalHeight },
+    uPlaneAspect: { value: img.clientWidth / img.clientHeight },
+    uTime: { value: 0 },
+  };
+  const geo = new THREE.PlaneGeometry(1, 1, 100, 100); // 後から画像のサイズにscaleするので1にしておく
+  const mat = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: vShader,
+    fragmentShader: fShader,
+  });
 
-// light
-const Light = new THREE.AmbientLight(0xefefef, 7)
-Scene.add(Light)
+  const mesh = new THREE.Mesh(geo, mat);
 
-// Renderer set
-Renderer.setSize(window.innerWidth, window.innerHeight)
-document.querySelector('.stage').appendChild(Renderer.domElement)
+  return mesh;
+};
 
-//  シーンとカメラを描画
-function animate() {
-  requestAnimationFrame(animate)
+// スクロール追従
+let targetScrollY = 0; // スクロール位置
+let currentScrollY = 0; // 線形補間を適用した現在のスクロール位置
+let scrollOffset = 0; // 上記2つの差分
 
-  Controls.update()
-  Renderer.render( Scene, Camera)
+// 開始と終了をなめらかに補間する関数
+const lerp = (start, end, multiplier) => {
+  return (1 - multiplier) * start + multiplier * end;
+};
+
+const updateScroll = () => {
+  // スクロール位置を取得
+  targetScrollY = document.documentElement.scrollTop;
+  // リープ関数でスクロール位置をなめらかに追従
+  currentScrollY = lerp(currentScrollY, targetScrollY, 0.1);
+
+  scrollOffset = targetScrollY - currentScrollY;
+};
+
+// 慣性スクロール
+const scrollArea = document.querySelector('.scrollable');
+document.body.style.height = `${scrollArea.getBoundingClientRect().height}px`;
+
+const imagePlaneArray = [];
+
+// 毎フレーム呼び出す
+const loop = () => {
+  updateScroll();
+
+  scrollArea.style.transform = `translate3d(0,${-currentScrollY}px,0)`;
+  for (const plane of imagePlaneArray) {
+    plane.update(scrollOffset);
+  }
+  renderer.render(scene, camera);
+
+  requestAnimationFrame(loop);
+};
+
+// リサイズ処理
+let timeoutId = 0;
+const resize = () => {
+  // three.jsのリサイズ
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  canvasSize.w = width;
+  canvasSize.h = height;
+
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(width, height);
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  // カメラの距離を計算し直す
+  const fov = 60;
+  const fovRad = (fov / 2) * (Math.PI / 180);
+  const dist = canvasSize.h / 2 / Math.tan(fovRad);
+  camera.position.z = dist;
+};
+
+const main = () => {
+  window.addEventListener('load', () => {
+    const imageArray = [...document.querySelectorAll('img')]
+    for (const img of imageArray) {
+      const mesh = createMesh(img)
+      scene.add(mesh)
+
+      const imagePlane = new ImagePlane(mesh, img)
+      imagePlane.setParams()
+
+      imagePlaneArray.push(imagePlane)
+    }
+    loop()
+  })
+
+  // リサイズ（負荷軽減のためリサイズが完了してから発火する）
+  window.addEventListener('resize', () => {
+    if (timeoutId) clearTimeout(timeoutId)
+
+    timeoutId = setTimeout(resize, 200)
+  })
 }
 
 export default () => {
-  animate()
-
-  // document.querySelector('.button-get-fov').addEventListener('click', e => {
-  //   e.preventDefault()
-  //   console.log(Light)
-  // })
+  main()
 }
