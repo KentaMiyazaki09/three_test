@@ -1,5 +1,5 @@
 import pkg from 'gulp'
-const { src, dest, series, watch } = pkg
+const { src, dest, series, parallel, watch } = pkg
 
 import gulpEjs from 'gulp-ejs'
 import gulpRename from 'gulp-rename'
@@ -16,7 +16,7 @@ import fs from 'fs'
 import path from 'path'
 
 import browserSync from 'browser-sync'
-const reload = browserSync.reload
+const bs = browserSync.create()
 
 import webpack from 'webpack'
 import pureVinylNamed from 'vinyl-named'
@@ -63,6 +63,7 @@ const compileSass = () => {
     .pipe(gulpSass().on('error', gulpSass.logError))
     .pipe(gulpAutoprefixer())
     .pipe(dest(destPath.sass, { sourcemaps: '.' }))
+    .pipe(bs.stream())
 }
 
 const buildSass = () => {
@@ -107,27 +108,26 @@ const minifyImages = ()  => {
 }
 
 /** ローカルサーバー */
-const buildServer = (done) => {
-  browserSync.init({
+const syncServer = (done) => {
+  bs.init({
     server: {
       baseDir: './dist'
-    }
+    },
+    files: './dist/**/*',
   })
   done()
 }
 
 /** ファイル監視 */
 const watchFiles = (done) => {
-  watch(srcPath.html, { ignoreInitial: false }, compileEjs).on('change', reload)
-  watch(srcPath.sass, { ignoreInitial: false }, compileSass).on('change', reload)
-  watch(srcPath.js, {ignoreInitial: false }, compireJS).on('change', reload)
+  watch(srcPath.html, { ignoreInitial: false }, compileEjs)
+  watch(srcPath.sass, { ignoreInitial: false }, compileSass)
+  watch(srcPath.js, {ignoreInitial: false }, compireJS)
   watch(srcPath.images, {ignoreInitial: false }, minifyImages)
   done()
 }
 
-const deleteFiles = async() => {
-  await fs.promises.rm('./dist', { recursive: true, force: true })
-}
+const deleteFiles = async() => await fs.promises.rm('./dist', { recursive: true, force: true })
 
 /** ファイル削除とbuild */
 const buildFiles = async(done) => {
@@ -140,6 +140,6 @@ const buildFiles = async(done) => {
 }
 
 /** gulp start・build */
-const start = series(buildServer, watchFiles)
+const start = series(syncServer, watchFiles)
 const build = series(buildFiles)
 export { start, build }
