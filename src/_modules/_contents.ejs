@@ -1,4 +1,4 @@
-<div class="wrapper">
+<!-- <div class="wrapper">
   <div class="scrollable">
     <section class="image-item">
       <img src="https://source.unsplash.com/whOkVvf0_hU/" alt="" />
@@ -13,9 +13,36 @@
       <img src="https://source.unsplash.com/whOkVvf0_hU/" alt="" />
     </section>
   </div>
-</div>
+</div> -->
 
 <div class="webgl-canvas">
   <canvas id="webgl-canvas" class="webgl-canvas__body"></canvas>
 </div>
+
+<script id="v-shader" type="x-shader/x-vertex">
+  varying vec2 vUv;
+
+  uniform float uYAspect;
+  uniform float uXAspect;
+
+  void main() {
+    vUv = uv - .5;
+    vUv.y *= min(uYAspect, 1.0);
+    vUv.x *= min(uXAspect, 1.0);
+    vUv += .5;
+
+    gl_Position = vec4( position, 1.0 );
+  }
+</script>
+<script id="f-shader" type="x-shader/x-fragment">
+  varying vec2 vUv;
+ 
+  uniform sampler2D uTexture;
+
+  void main() {
+      vec3 color = texture2D( uTexture, vUv ).rgb;
+
+    gl_FragColor = vec4( color, 1.0 );
+  }
+</script>
 <script src="/assets/js/index.js"></script>
