@@ -1,0 +1,8 @@
+@use './_reset';
+@use './_mixin' as m;
+
+.section {
+  height: 100vh;
+  line-height: 1;
+  font-size: 0;
+}
