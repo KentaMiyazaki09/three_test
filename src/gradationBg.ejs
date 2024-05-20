@@ -1,0 +1,32 @@
+<%- include('./_modules/_header.ejs', {
+  style: 'gradation',
+}) %>
+<canvas id="webgl-canvas"></canvas>
+<div class="container">
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
+</div>
+
+<script id="v-shader" type="x-shader/x-vertex">
+  in vec2 aPosition;
+  void main() {
+    gl_Position = vec4(aPosition, 0.0, 1.0);
+  }`;
+</script>
+<script id="f-shader" type="x-shader/x-fragment">
+  precision mediump float;
+  out vec4 outColor;
+  void main() {
+    outColor = vec4(1.0, 0.0, 0.0, 1.0); // 赤色
+  }`;
+</script>
+<script src="/assets/js/gradationBg.js"></script>
+
+<%- include('./_modules/_footer.ejs') %>

@@ -5,10 +5,10 @@ const leap = (start, end, mutiplier) => {
 }
 
 const updateScroll = () => {
-  targetScrollY = document.documentElement.scrollTop
-  currentScrollY = leap(currentScrollY, targetScrollY, 0.1)
-  scrollOffset = targetScrollY - currentScrollY
-  console.log()
+  // targetScrollY = document.documentElement.scrollTop
+  // currentScrollY = leap(currentScrollY, targetScrollY, 0.1)
+  // scrollOffset = targetScrollY - currentScrollY
+  // console.log(targetScrollY)
 }
 
 const canvasEl = document.querySelector('.webgl-canvas')
@@ -77,7 +77,7 @@ function update(offset) {
 function loop() {
   updateScroll()
 
-  update(scrollOffset)
+  // update(scrollOffset)
 
   renderer.render(scene, camera)
   requestAnimationFrame(loop)
