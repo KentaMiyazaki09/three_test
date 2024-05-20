@@ -14,18 +14,29 @@
   <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae atque animi, est minus veniam sint voluptatem sit dolorem officia fugit earum velit omnis ipsum. Quibusdam corrupti dolorem omnis dolor hic!</p>
 </div>
 
-<script id="v-shader" type="x-shader/x-vertex">
+<!-- シェーダー -->
+<script id="v-shader" type="x-shader/x-vertex">#version 300 es
+
   in vec2 aPosition;
+
   void main() {
     gl_Position = vec4(aPosition, 0.0, 1.0);
-  }`;
+  }
 </script>
-<script id="f-shader" type="x-shader/x-fragment">
+<script id="f-shader" type="x-shader/x-fragment">#version 300 es
   precision mediump float;
+
+  uniform vec2 uResolution;
+
+  uniform float uScrollPosition;
+  uniform vec2 uMousePosition;
+
   out vec4 outColor;
+
   void main() {
-    outColor = vec4(1.0, 0.0, 0.0, 1.0); // 赤色
-  }`;
+    vec2 uv = gl_FragCoord.xy / uResolution;
+    outColor = vec4(uv.x, sin(uScrollPosition * 0.001), uMousePosition.y, 1.0);
+  }
 </script>
 <script src="/assets/js/gradationBg.js"></script>
 

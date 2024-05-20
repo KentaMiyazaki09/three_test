@@ -57,6 +57,7 @@ const createMesh = (src) => {
     vertexShader: document.querySelector('#v-shader').textContent,
     fragmentShader: document.querySelector('#f-shader').textContent,
   });
+
   const mesh = new THREE.Mesh(planeGeometry, shaderMaterial);
   scene.add(mesh);
 }

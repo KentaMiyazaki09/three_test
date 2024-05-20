@@ -3,34 +3,12 @@ const canvas = document.getElementById('webgl-canvas')
 const gl = canvas.getContext("webgl2")
 
 // シェーダープログラムの作成
-const vertexShaderSource = `#version 300 es
-  in vec2 aPosition;
-
-  void main() {
-    gl_Position = vec4(aPosition, 0.0, 1.0);
-}`
-
-const fragmentShaderSource = `#version 300 es
-  precision mediump float;
-
-  uniform vec2 uResolution;
-
-  uniform float uScrollPosition;
-  uniform vec2 uMousePosition;
-
-  out vec4 outColor;
-
-  void main() {
-    vec2 uv = gl_FragCoord.xy / uResolution;
-    outColor = vec4(uv.x, sin(uScrollPosition * 0.001), uMousePosition.y, 1.0);
-}`
-
 const vertexShader = gl.createShader(gl.VERTEX_SHADER)
-gl.shaderSource(vertexShader, vertexShaderSource)
+gl.shaderSource(vertexShader, document.getElementById('v-shader').text)
 gl.compileShader(vertexShader)
 
 const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
-gl.shaderSource(fragmentShader, fragmentShaderSource)
+gl.shaderSource(fragmentShader, document.getElementById('f-shader').text)
 gl.compileShader(fragmentShader)
 
 const shaderProgram = gl.createProgram()
