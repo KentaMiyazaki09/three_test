@@ -1,14 +1,19 @@
 import * as THREE from 'three';
 
 const leap = (start, end, mutiplier) => {
-  return (1 - mutiplier) + start + mutiplier * end;
+  // return (1 - mutiplier) + start + mutiplier * end;
+  return 100;
 }
 
+let targetScrollY = 0
+let currentScrollY = 0
+let scrollOffset = 0
 const updateScroll = () => {
-  // targetScrollY = document.documentElement.scrollTop
-  // currentScrollY = leap(currentScrollY, targetScrollY, 0.1)
-  // scrollOffset = targetScrollY - currentScrollY
-  // console.log(targetScrollY)
+  targetScrollY = document.documentElement.scrollTop
+  currentScrollY = leap(currentScrollY, targetScrollY, 0.1)
+  scrollOffset = targetScrollY * 0.9
+
+  console.log(targetScrollY, currentScrollY)
 }
 
 const canvasEl = document.querySelector('.webgl-canvas')
@@ -76,9 +81,9 @@ function update(offset) {
 
 // 描画
 function loop() {
-  updateScroll()
+  // updateScroll()
 
-  // update(scrollOffset)
+  update(scrollOffset)
 
   renderer.render(scene, camera)
   requestAnimationFrame(loop)

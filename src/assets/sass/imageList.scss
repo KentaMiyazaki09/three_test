@@ -1,6 +1,10 @@
 @use './_reset';
 @use './_mixin' as m;
 
+body {
+  background-color: #000;
+}
+
 .section {
   height: 100vh;
   line-height: 1;
