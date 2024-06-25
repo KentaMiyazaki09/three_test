@@ -13,7 +13,7 @@
   varying vec2 vUv;
   uniform float uTime;
 
-  float PI = 3.14;
+  float PI = 3.1415926535897932384626433832795;
 
   void main() {
     vUv = uv;
@@ -22,20 +22,30 @@
     float offset = 0.01;
     float freq = 0.05;
     float amp = 10.0;
-    pos.y = pos.y + sin(pos.x * offset + uTime * freq * PI) * amp;
+    pos.x = pos.x + sin(pos.y * offset + uTime * freq * PI) * amp;
 
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
   }
 </script>
 <script id="f-shader" type="x-shader/x-fragment">
   varying vec2 vUv;
- 
   uniform sampler2D uTexture;
+  uniform float uImageAspect;
+  uniform float uPlaneAspect;
 
   void main() {
-    vec3 color = texture2D( uTexture, vUv ).rgb;
+    vec2 ratio = vec2(
+      min(uPlaneAspect / uImageAspect, 1.0),
+      min((1.0 / uPlaneAspect) / (1.0 / uImageAspect), 1.0)
+    );
 
-    gl_FragColor = vec4( color, 1.0 );
+    vec2 fixedUv = vec2(
+      (vUv.x - 0.5) * ratio.x + 0.5,
+      (vUv.y - 0.5) * ratio.y + 0.5
+    );
+
+    vec3 texture = texture2D(uTexture, fixedUv).rgb;
+    gl_FragColor = vec4(texture, 1.0);
   }
 </script>
 <script src="/assets/js/imageList.js"></script>
