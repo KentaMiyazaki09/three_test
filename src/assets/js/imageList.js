@@ -27,7 +27,7 @@ camera.position.z = distance
 const scene = new THREE.Scene()
 
 const loader = new THREE.TextureLoader()
-const texture = loader.load('/assets/images/photo/01.jpg')
+const texture = loader.load('https://raw.githubusercontent.com/KentaMiyazaki09/three_test/main/src/assets/images/photo/01.jpg')
 
 const uniforms = {
   uTexture: { value: texture },
@@ -48,7 +48,7 @@ scene.add(mesh);
 
 // 描画
 function loop() {
-  uniforms.uTime.value++;
+  uniforms.uTime.value+=0.2;
   renderer.render(scene, camera)
   requestAnimationFrame(loop)
 }
