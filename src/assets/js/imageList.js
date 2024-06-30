@@ -1,5 +1,21 @@
 import * as THREE from 'three';
 
+let targetScrollY = 0
+let currentScrollY = 0
+let scrollOffset = 0
+
+const lerp = (start, end, multiplier) => {
+  return (1 - multiplier) * start + multiplier * end
+}
+
+const updateScroll = () => {
+  // スクロール位置を取得
+  targetScrollY = window.scrollY
+  // リープ関数でスクロール位置をなめらかに追従
+  currentScrollY = lerp(currentScrollY, targetScrollY, 0.1)
+  scrollOffset = targetScrollY - currentScrollY
+}
+
 const canvasEl = document.querySelector('.webgl-canvas')
 const canvasSize = {
   w: window.innerWidth,
@@ -48,7 +64,9 @@ scene.add(mesh);
 
 // 描画
 function loop() {
-  uniforms.uTime.value+=0.2;
+  updateScroll()
+  uniforms.uTime.value = scrollOffset
+
   renderer.render(scene, camera)
   requestAnimationFrame(loop)
 }
