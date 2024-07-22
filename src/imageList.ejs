@@ -6,7 +6,7 @@
 <section class="section">
   <canvas class="webgl-canvas"></canvas>
 </section>
-<div style="background: black; height: 1000px;"></div>
+<div style="background: black; height: 300px;"></div>
 
 <!-- シェーダー -->
 <script id="v-shader" type="x-shader/x-vertex">
@@ -21,7 +21,7 @@
 
     float offset = 0.01;
     float freq = 0.05;
-    float amp = 5.0;
+    float amp = 3.0;
     pos.x = pos.x + sin(pos.y * offset + uTime * freq * PI) * amp;
     pos.y = pos.y + cos(pos.x * offset + uTime * freq * PI) * amp;
 

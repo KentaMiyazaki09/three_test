@@ -3,22 +3,19 @@ import * as THREE from 'three';
 let targetScrollY = 0
 let currentScrollY = 0
 let scrollOffset = 0
-
 const lerp = (start, end, multiplier) => {
+  console.log(start, end, multiplier)
   return (1 - multiplier) * start + multiplier * end
 }
-
 const updateScroll = () => {
-  // スクロール位置を取得
-  targetScrollY = window.scrollY
-  // リープ関数でスクロール位置をなめらかに追従
+  targetScrollY = document.documentElement.scrollTop
   currentScrollY = lerp(currentScrollY, targetScrollY, 0.1)
   scrollOffset = targetScrollY - currentScrollY
 }
 
 const canvasEl = document.querySelector('.webgl-canvas')
 const canvasSize = {
-  w: window.innerWidth,
+  w: document.body.clientWidth,
   h: window.innerHeight,
 }
 
@@ -52,7 +49,7 @@ const uniforms = {
   uTime: { value: 0 },
 }
 
-const geo = new THREE.PlaneGeometry(canvasSize.w, canvasSize.h, 100, 100);
+const geo = new THREE.PlaneGeometry(canvasSize.w, canvasSize.h, 100, 100)
 const mat = new THREE.ShaderMaterial({
   uniforms,
   vertexShader: document.getElementById('v-shader').textContent,
@@ -66,6 +63,7 @@ scene.add(mesh);
 function loop() {
   updateScroll()
   uniforms.uTime.value = scrollOffset
+  // uniforms.uTime.value+=0.2;
 
   renderer.render(scene, camera)
   requestAnimationFrame(loop)
